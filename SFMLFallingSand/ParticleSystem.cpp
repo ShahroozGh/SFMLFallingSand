@@ -245,7 +245,7 @@ void ParticleSystem::update()
 		}
 	}
 
-	//Update colors ( Can do this diring update process instead)
+	//Update colors ( Can do this during update process instead)
 	for (int x = 0; x < WIN_TILE_WIDTH; x++) {
 		for (int y = 0; y < WIN_TILE_HEIGHT; y++) {
 			grid[x][y].moved = false;

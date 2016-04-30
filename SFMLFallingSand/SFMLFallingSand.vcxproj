@@ -152,11 +152,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ButtonBase.cpp" />
+    <ClCompile Include="ButtonGroup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParticleBase.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ButtonBase.h" />
+    <ClInclude Include="ButtonGroup.h" />
     <ClInclude Include="MapsAndConstants.h" />
     <ClInclude Include="ParticleBase.h" />
     <ClInclude Include="ParticleSystem.h" />
