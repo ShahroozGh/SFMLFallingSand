@@ -36,6 +36,9 @@ ParticleSystem::ParticleSystem(int winWidth, int winHeight)
 			else if (x == 0 || x == WIN_TILE_WIDTH - 1 || y == 0 || y == WIN_TILE_HEIGHT - 1) {
 				grid[x][y] = ParticleBase(BORDER, x, y);
 			}
+			//else if (y >= 350/5) {
+			//	grid[x][y] = ParticleBase(WATER, x, y);
+			//}
 			else
 				grid[x][y] = ParticleBase(AIR, x, y);
 		}

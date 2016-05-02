@@ -20,10 +20,57 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	button.setSelected(true);
 
 	ButtonGroup bGroup;
+	
+	sf::Clock clock;
 
+	//Text
+	//Load font
+	sf::Font font;
+	if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf"))
+	{
+		// error...
+		return 0;
+	}
+
+	//Create text to draw
+	sf::Text elapsedTime;
+	// set the string to display
+	elapsedTime.setString("Time: ");
+	// set the character size
+	elapsedTime.setCharacterSize(12); // in pixels, not points!
+									   // set the color
+	elapsedTime.setColor(sf::Color::White);
+
+	elapsedTime.setFont(font);
+
+	sf::Text fpsLabel;
+	fpsLabel.setPosition(sf::Vector2f(600, 20));
+	// set the string to display
+	fpsLabel.setString("FPS: ");
+	// set the character size
+	fpsLabel.setCharacterSize(12); // in pixels, not points!
+									  // set the color
+	fpsLabel.setColor(sf::Color::White);
+
+	fpsLabel.setFont(font);
+
+	sf::Text numOfParticlesLabel;
+	numOfParticlesLabel.setPosition(sf::Vector2f(600, 40));
+	// set the string to display
+	numOfParticlesLabel.setString("Particles: ");
+	// set the character size
+	numOfParticlesLabel.setCharacterSize(12); // in pixels, not points!
+								   // set the color
+	numOfParticlesLabel.setColor(sf::Color::White);
+
+	numOfParticlesLabel.setFont(font);
+
+	//Game loop
 	bool buttonHit = false;
 	while (window.isOpen())
 	{
+		
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -38,6 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					//button.checkIfClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.x));
 					//buttonHit = button.checkIfClicked(sf::Vector2f(localPosition.x, localPosition.y));
 					buttonHit = bGroup.onClick(sf::Vector2f(localPosition.x, localPosition.y));
+					
 
 					//Update selected Element
 					switch (bGroup.selectedButton) {
@@ -67,6 +115,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					//sf::Vector2i localPosition = sf::Mouse::getPosition(window);
 					//button.checkIfClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.x));
 					buttonHit = false;
+					
 				}
 			}
 
@@ -115,7 +164,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		bGroup.draw(window);
 
+		window.draw(elapsedTime);
+		window.draw(fpsLabel);
+		window.draw(numOfParticlesLabel);
+
 		window.display();
+
+		sf::Time elapsed = clock.restart();
+		elapsedTime.setString("Time:" + std::to_string(elapsed.asMilliseconds()));
+		fpsLabel.setString("FPS:" + std::to_string(1000.0f / elapsed.asMilliseconds()));
+		numOfParticlesLabel.setString("Particles:");
+
+
 
 		window.setFramerateLimit(30);
 	}
