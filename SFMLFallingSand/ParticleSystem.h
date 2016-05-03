@@ -51,7 +51,10 @@ private:
 
 	void initVerticies();
 	void swap(int x1, int y1, int x2, int y2);
+	void replace(int x1, int y1, Element type);
+	void addParticle(int x1, int y1, ParticleBase particle);
 
+	void updateTileColor(int x, int y, Element type);
 
 	//Returns true if e1 more dense than e2
 	bool isMoreDense(Element e1, Element e2);
