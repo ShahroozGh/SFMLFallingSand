@@ -149,7 +149,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{
 			sf::Vector2i localPosition = sf::Mouse::getPosition(window); // window is a sf::Window
 			// left mouse button is pressed:
-			particles.addParticle(localPosition.x, localPosition.y);
+			int brushSize = 4;
+			particles.addParticles(localPosition.x, localPosition.y, brushSize);
 		}
 
 		

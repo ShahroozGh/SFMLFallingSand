@@ -11,7 +11,7 @@ public:
 	~ParticleSystem();
 
 	void update();
-	void addParticle(int x, int y);
+	void addParticles(int x, int y, int brushSize);
 
 	Element ADD_TYPE;
 

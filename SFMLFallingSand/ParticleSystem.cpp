@@ -14,7 +14,7 @@ ParticleSystem::ParticleSystem(int winWidth, int winHeight)
 {
 	ADD_TYPE = WATER;
 
-	TILE_SIZE = 5;
+	TILE_SIZE = 2;
 	WINDOW_WIDTH = winWidth;
 	WINDOW_HEIGHT = winHeight;
 
@@ -36,9 +36,9 @@ ParticleSystem::ParticleSystem(int winWidth, int winHeight)
 			else if (x == 0 || x == WIN_TILE_WIDTH - 1 || y == 0 || y == WIN_TILE_HEIGHT - 1) {
 				grid[x][y] = ParticleBase(BORDER, x, y);
 			}
-			else if (y >= 350/5) {
-				grid[x][y] = ParticleBase(WATER, x, y);
-			}
+			//else if (y >= 350/5) {
+			//	grid[x][y] = ParticleBase(WATER, x, y);
+			//}
 			else
 				grid[x][y] = ParticleBase(AIR, x, y);
 		}
@@ -146,13 +146,20 @@ bool ParticleSystem::isMoreDense(Element e1, Element e2)
 }
 
 //Adds particle from mouseclick using pixel x,y
-void ParticleSystem::addParticle(int x, int y)
+void ParticleSystem::addParticles(int x, int y, int brushSize)
 {
 	int xT = (x - (x % TILE_SIZE)) / TILE_SIZE;
 	int yT = (y - (y % TILE_SIZE)) / TILE_SIZE;
 
-	grid[xT][yT] = ParticleBase(ADD_TYPE, xT, yT);
-	updateTileColor(xT,yT, ADD_TYPE);
+	for (int i = 0; i < brushSize; i++) {
+		for (int j = 0; j < brushSize; j++) {
+			grid[xT + i - brushSize/2][yT + j - brushSize / 2] = ParticleBase(ADD_TYPE, xT, yT);
+			updateTileColor(xT + i - brushSize / 2, yT + j - brushSize / 2, ADD_TYPE);
+		
+		}
+
+	}
+	
 }
 
 sf::Vertex * ParticleSystem::getQuad(int x, int y)
