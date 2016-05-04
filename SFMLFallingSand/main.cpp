@@ -103,6 +103,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						break;
 					case 4:
 						particles.ADD_TYPE = SPOUT;
+					case 5:
+						particles.ADD_TYPE = FIRE;
 						break;
 					}
 				}
@@ -139,6 +141,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				case sf::Keyboard::Num5:
 					particles.ADD_TYPE = SPOUT;
 					break;
+				case sf::Keyboard::Num6:
+					particles.ADD_TYPE = FIRE;
+					break;
 				}
 			}
 
@@ -149,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		{
 			sf::Vector2i localPosition = sf::Mouse::getPosition(window); // window is a sf::Window
 			// left mouse button is pressed:
-			int brushSize = 4;
+			int brushSize = 5;
 			particles.addParticles(localPosition.x, localPosition.y, brushSize);
 		}
 

@@ -12,6 +12,36 @@ ParticleBase::ParticleBase(Element p_type, int p_x, int p_y)
 	x = p_x;
 	y = p_y;
 	moved = false;
+	life = -1;
+	temperature = 0;
+	isBurning = false;
+
+	if (p_type == FIRE) {
+		life = rand() % 10 + 10;
+	}
+	else {
+		life = -1;
+	}
+
+	
+	if (type == AIR)
+		color = sf::Color::Black;
+	else if (type == SAND)
+		color = sf::Color::Yellow;
+	else if (type == WATER)
+		color = sf::Color::Blue;
+	else if (type == STONE)
+		color = sf::Color(211, 211, 211); //Light grey
+	else if (type == ICE)
+		color = sf::Color(140, 255, 255); //Very close to white
+	else if (type == SPOUT)
+		color = sf::Color(0, 0, 200); //Bluish
+	else if (type == BORDER)
+		color = sf::Color::Magenta;
+	else if (type == FIRE)
+		color = sf::Color::Red;
+	else
+		color = sf::Color::Red;
 }
 
 

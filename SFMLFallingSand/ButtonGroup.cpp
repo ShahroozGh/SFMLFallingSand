@@ -22,6 +22,7 @@ ButtonGroup::ButtonGroup()
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
+	buttons.push_back(ButtonBase());
 
 	buttons[0].setPosition(sf::Vector2f(10,20));
 	buttons[0].setColor(sf::Color::Yellow);
@@ -44,8 +45,12 @@ ButtonGroup::ButtonGroup()
 	buttons[4].setSelectedColor(sf::Color::White);
 
 	buttons[5].setPosition(sf::Vector2f(310, 20));
-	buttons[5].setColor(sf::Color::Magenta);
+	buttons[5].setColor(sf::Color::Red);
 	buttons[5].setSelectedColor(sf::Color::White);
+
+	buttons[6].setPosition(sf::Vector2f(370, 20));
+	buttons[6].setColor(sf::Color::Magenta);
+	buttons[6].setSelectedColor(sf::Color::White);
 
 
 	

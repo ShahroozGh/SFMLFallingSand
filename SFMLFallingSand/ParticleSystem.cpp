@@ -36,9 +36,9 @@ ParticleSystem::ParticleSystem(int winWidth, int winHeight)
 			else if (x == 0 || x == WIN_TILE_WIDTH - 1 || y == 0 || y == WIN_TILE_HEIGHT - 1) {
 				grid[x][y] = ParticleBase(BORDER, x, y);
 			}
-			//else if (y >= 350/5) {
-			//	grid[x][y] = ParticleBase(WATER, x, y);
-			//}
+			else if (y <= 350/2) {
+				grid[x][y] = ParticleBase(WATER, x, y);
+			}
 			else
 				grid[x][y] = ParticleBase(AIR, x, y);
 		}
@@ -110,6 +110,7 @@ void ParticleSystem::addParticle(int x1, int y1, ParticleBase particle)
 void ParticleSystem::updateTileColor(int x, int y, Element type)
 {
 	sf::Color color;
+	/*
 	if (type == AIR)
 		color = sf::Color::Black;
 	else if (type == SAND)
@@ -124,8 +125,12 @@ void ParticleSystem::updateTileColor(int x, int y, Element type)
 		color = sf::Color(0, 0, 200); //Bluish
 	else if (type == BORDER)
 		color = sf::Color::Magenta;
+	else if (type == FIRE)
+		color = sf::Color::Red;
 	else
 		color = sf::Color::Red;
+		*/
+	color = grid[x][y].color;
 
 	sf::Vertex* quad = getQuad(x, y);
 
@@ -195,6 +200,57 @@ void ParticleSystem::update()
 			//If air do nothing
 			else if (curr.type == AIR)
 				continue;
+			else if (curr.type == FIRE) {
+				//decriment life
+				grid[x][y].life--;
+				int life = grid[x][y].life;
+				//Update color to match life time
+				//Max life for fire is 20, min is 0
+				//Red 255,0,0 -> Yellow 255,255,0 ->White 255,255,255
+			
+				grid[x][y].color = sf::Color(255, 12*life, 0.6*std::pow(life,2));
+				
+
+				if (grid[x][y].life == 0) {
+					replace(x,y,AIR);
+					continue;
+				}
+				//Reverse gravity
+				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
+					swap(x, y, x, y - 1);
+				}
+
+				if (grid[x][y - 1].type == FIRE || grid[x][y - 1].type != FIRE) {
+					//Check if diagonals are open
+					//Attempt to go diagonal up
+					if (grid[x + 1][y - 1].type == AIR || grid[x - 1][y - 1].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y - 1].type == AIR)
+								swap(x, y, x + 1, y - 1);
+						}
+						else {
+							if (grid[x - 1][y - 1].type == AIR)
+								swap(x, y, x - 1, y - 1);
+						}
+					}
+
+					//Attempt to go sideways
+					if (grid[x + 1][y].type == AIR || grid[x - 1][y].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y].type == AIR)
+								swap(x, y, x + 1, y);
+						}
+						else {
+							if (grid[x - 1][y].type == AIR)
+								swap(x, y, x - 1, y);
+						}
+					}
+				}
+			}
 
 			else if (curr.type == SAND) {
 
