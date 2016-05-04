@@ -15,3 +15,16 @@ static std::map<Element, float> DENSITY_MAP = {
 	{ SMOKE, -0.1f },
 	{ WOOD, 1.0f },
 	{ BORDER, 99.f} };
+
+static std::map<Element, bool> FLAMMABLE_MAP = {
+	{ AIR, false },
+	{ SAND, false },
+	{ WATER, false },
+	{ STONE, false },
+	{ ICE, false },
+	{ SPOUT, false },
+	{ FIRE, false },
+	{ EMBER, false },
+	{ SMOKE, false },
+	{ WOOD, true },
+	{ BORDER, false } };

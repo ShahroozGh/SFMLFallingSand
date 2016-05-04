@@ -107,6 +107,24 @@ void ParticleSystem::addParticle(int x1, int y1, ParticleBase particle)
 	updateTileColor(x1, y1, particle.type);
 }
 
+void ParticleSystem::ignite(int x, int y)
+{
+	if (!grid[x][y].isBurning) {
+		int random = rand() % 100 + 100;//Change this to choose lifetime based on flammability + temperature
+		grid[x][y].life = random;
+
+		grid[x][y].isBurning = true;
+	}
+}
+
+void ParticleSystem::putOut(int x, int y)
+{
+	grid[x][y].isBurning = false;
+	grid[x][y].life = -1;
+	grid[x][y].color = sf::Color(100, 45, 0);
+	updateTileColor(x,y,WOOD);
+}
+
 void ParticleSystem::updateTileColor(int x, int y, Element type)
 {
 	sf::Color color;
@@ -130,6 +148,19 @@ void ParticleSystem::updateTileColor(int x, int y, Element type)
 	else
 		color = sf::Color::Red;
 		*/
+	int life = grid[x][y].life;
+	if (type == FIRE) {
+		//Update color to match life time
+		//Max life for fire is 20, min is 0
+		//Red 255,0,0 -> Yellow 255,255,0 ->White 255,255,255
+
+		grid[x][y].color = sf::Color(255, 12*life, 0.6*std::pow(life,2));
+	
+	}
+	if (grid[x][y].isBurning) {
+		grid[x][y].color.g = grid[x][y].color.g / 4;
+	
+	}
 	color = grid[x][y].color;
 
 	sf::Vertex* quad = getQuad(x, y);
@@ -193,6 +224,43 @@ void ParticleSystem::update()
 			
 			
 			ParticleBase curr = grid[x][y];
+
+			//Check if burning, if so spread
+			if (curr.isBurning) {
+
+				grid[x][y].life--;
+
+				//grid[x][y].color.g = grid[x][y].color.g / 4;
+				updateTileColor(x, y, WOOD);
+
+				if (grid[x][y].life == 0) {
+					replace(x,y, AIR);
+					continue;
+				}
+
+				int random = rand() % 1000;
+
+				if (FLAMMABLE_MAP[grid[x - 1][y].type] && random < 2) {
+		
+					ignite(x - 1,y);
+				}
+				else if (FLAMMABLE_MAP[grid[x + 1][y].type] && random < 4) {
+					ignite(x + 1, y);
+					
+				}
+				else if (FLAMMABLE_MAP[grid[x][y + 1].type] && random < 6) {
+					ignite(x, y + 1);
+					
+				}
+				else if (FLAMMABLE_MAP[grid[x][y - 1].type] && random < 8) {
+					ignite(x, y - 1);
+					
+				}
+			}
+
+
+
+
 			//If already moved do nothing, reset moved flag?
 			if (curr.moved)
 				continue;
@@ -200,6 +268,7 @@ void ParticleSystem::update()
 			//If air do nothing
 			else if (curr.type == AIR)
 				continue;
+			
 			else if (curr.type == FIRE) {
 				//decriment life
 				grid[x][y].life--;
@@ -208,7 +277,7 @@ void ParticleSystem::update()
 				//Max life for fire is 20, min is 0
 				//Red 255,0,0 -> Yellow 255,255,0 ->White 255,255,255
 			
-				grid[x][y].color = sf::Color(255, 12*life, 0.6*std::pow(life,2));
+				//grid[x][y].color = sf::Color(255, 12*life, 0.6*std::pow(life,2));
 				
 
 				if (grid[x][y].life == 0) {
@@ -219,16 +288,16 @@ void ParticleSystem::update()
 				int random = rand() % 100;
 				//Check if it can set anything on fire
 				if (grid[x - 1][y].type == WOOD && random < 5) {
-					grid[x - 1][y].isBurning = true;
+					ignite(x - 1, y);
 				}
 				else if (grid[x][y - 1].type == WOOD && random < 10) {
-					grid[x][y - 1].isBurning = true;
+					ignite(x, y - 1);
 				}
 				else if (grid[x + 1][y].type == WOOD && random < 10) {
-					grid[x + 1][y].isBurning = true;
+					ignite(x + 1, y);
 				}
 				else if (grid[x][y + 1].type == WOOD && random < 15) {
-					grid[x][y + 1].isBurning = true;
+					ignite(x, y + 1);
 				}
 
 				//Reverse gravity
@@ -306,6 +375,15 @@ void ParticleSystem::update()
 					replace(x + 1, y, AIR);
 				if (grid[x - 1][y].type == FIRE)
 					replace(x - 1, y, AIR);
+
+				if (grid[x][y + 1].isBurning)
+					putOut(x,y + 1);
+				if (grid[x][y - 1].isBurning)
+					putOut(x, y - 1);
+				if (grid[x + 1][y].isBurning)
+					putOut(x + 1, y);
+				if (grid[x - 1][y].isBurning)
+					putOut(x - 1, y);
 				
 
 				//Gravity

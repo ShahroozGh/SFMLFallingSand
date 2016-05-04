@@ -24,6 +24,8 @@ public:
 	sf::Color color;
 
 	void update(std::vector<std::vector<ParticleBase> > &grid);
+
+	
 	
 };
 
