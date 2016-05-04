@@ -36,10 +36,14 @@ ParticleBase::ParticleBase(Element p_type, int p_x, int p_y)
 		color = sf::Color(140, 255, 255); //Very close to white
 	else if (type == SPOUT)
 		color = sf::Color(0, 0, 200); //Bluish
-	else if (type == BORDER)
-		color = sf::Color::Magenta;
 	else if (type == FIRE)
 		color = sf::Color::Red;
+	else if (type == SMOKE)
+		color = sf::Color(100,100,100);
+	else if (type == WOOD)
+		color = sf::Color(100,45,0);
+	else if (type == BORDER)
+		color = sf::Color::Magenta;
 	else
 		color = sf::Color::Red;
 }

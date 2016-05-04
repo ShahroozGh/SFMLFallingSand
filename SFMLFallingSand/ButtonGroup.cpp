@@ -49,8 +49,12 @@ ButtonGroup::ButtonGroup()
 	buttons[5].setSelectedColor(sf::Color::White);
 
 	buttons[6].setPosition(sf::Vector2f(370, 20));
-	buttons[6].setColor(sf::Color::Magenta);
+	buttons[6].setColor(sf::Color(100,45,0));
 	buttons[6].setSelectedColor(sf::Color::White);
+
+	buttons[7].setPosition(sf::Vector2f(430, 20));
+	buttons[7].setColor(sf::Color::Magenta);
+	buttons[7].setSelectedColor(sf::Color::White);
 
 
 	

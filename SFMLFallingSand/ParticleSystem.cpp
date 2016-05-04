@@ -215,6 +215,22 @@ void ParticleSystem::update()
 					replace(x,y,AIR);
 					continue;
 				}
+
+				int random = rand() % 100;
+				//Check if it can set anything on fire
+				if (grid[x - 1][y].type == WOOD && random < 5) {
+					grid[x - 1][y].isBurning = true;
+				}
+				else if (grid[x][y - 1].type == WOOD && random < 10) {
+					grid[x][y - 1].isBurning = true;
+				}
+				else if (grid[x + 1][y].type == WOOD && random < 10) {
+					grid[x + 1][y].isBurning = true;
+				}
+				else if (grid[x][y + 1].type == WOOD && random < 15) {
+					grid[x][y + 1].isBurning = true;
+				}
+
 				//Reverse gravity
 				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
 					swap(x, y, x, y - 1);
@@ -281,6 +297,17 @@ void ParticleSystem::update()
 
 			else if (curr.type == WATER) {
 				
+				//Check to put out any fire/decrease temperature
+				if (grid[x][y + 1].type == FIRE)
+					replace(x, y + 1, AIR);
+				if (grid[x][y - 1].type == FIRE)
+					replace(x, y - 1, AIR);
+				if (grid[x + 1][y].type == FIRE)
+					replace(x + 1, y, AIR);
+				if (grid[x - 1][y].type == FIRE)
+					replace(x - 1, y, AIR);
+				
+
 				//Gravity
 				if (DENSITY_MAP[grid[x][y + 1].type] < DENSITY_MAP[curr.type]) {
 					swap(x, y, x, y + 1);
@@ -323,6 +350,30 @@ void ParticleSystem::update()
 			
 			}
 
+			else if (curr.type == WOOD) {
+				int random = rand() % 100;
+				if (grid[x][y].isBurning) {
+					if (grid[x - 1][y].type == AIR && random < 5) {
+						//grid[x - 1][y] = ParticleBase(WATER, x - 1, y);
+						replace(x - 1, y, FIRE);
+					}
+					else if (grid[x][y - 1].type == AIR && random < 10) {
+						//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
+						replace(x, y - 1, FIRE);
+					}
+					else if (grid[x + 1][y].type == AIR && random < 10) {
+						//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
+						replace(x + 1, y, FIRE);
+					}
+					else if (grid[x][y + 1].type == AIR && random < 15) {
+						//grid[x][y + 1] = ParticleBase(WATER, x, y + 1);
+						replace(x, y + 1, FIRE);
+					}
+				
+				}
+
+			}
+
 			else if (curr.type == ICE) {
 				int random = rand() % 100;
 
@@ -361,6 +412,8 @@ void ParticleSystem::update()
 				}
 
 			}
+
+			
 
 
 			

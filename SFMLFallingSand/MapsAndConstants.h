@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 
-enum Element { AIR, SAND, WATER, STONE, ICE, SPOUT, FIRE, EMBER, SMOKE, BORDER };
+enum Element { AIR, SAND, WATER, STONE, ICE, SPOUT, FIRE, EMBER, SMOKE, WOOD, BORDER };
 
 static std::map<Element, float> DENSITY_MAP = {
 	{ AIR, 0.f },
@@ -13,4 +13,5 @@ static std::map<Element, float> DENSITY_MAP = {
 	{ FIRE, -0.1f },
 	{ EMBER, 0.5f },
 	{ SMOKE, -0.1f },
+	{ WOOD, 1.0f },
 	{ BORDER, 99.f} };

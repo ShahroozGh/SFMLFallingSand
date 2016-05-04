@@ -103,8 +103,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 						break;
 					case 4:
 						particles.ADD_TYPE = SPOUT;
+						break;
 					case 5:
 						particles.ADD_TYPE = FIRE;
+						break;
+					case 6:
+						particles.ADD_TYPE = WOOD;
 						break;
 					}
 				}
