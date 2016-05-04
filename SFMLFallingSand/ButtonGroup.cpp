@@ -23,6 +23,7 @@ ButtonGroup::ButtonGroup()
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
+	buttons.push_back(ButtonBase());
 
 	buttons[0].setPosition(sf::Vector2f(10,20));
 	buttons[0].setColor(sf::Color::Yellow);
@@ -53,8 +54,12 @@ ButtonGroup::ButtonGroup()
 	buttons[6].setSelectedColor(sf::Color::White);
 
 	buttons[7].setPosition(sf::Vector2f(430, 20));
-	buttons[7].setColor(sf::Color::Magenta);
+	buttons[7].setColor(COLOR_MAP[WATER_VAPOR]);
 	buttons[7].setSelectedColor(sf::Color::White);
+
+	buttons[8].setPosition(sf::Vector2f(490, 20));
+	buttons[8].setColor(sf::Color::Magenta);
+	buttons[8].setSelectedColor(sf::Color::White);
 
 
 	

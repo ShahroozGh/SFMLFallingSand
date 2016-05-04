@@ -110,6 +110,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					case 6:
 						particles.ADD_TYPE = WOOD;
 						break;
+					case 7:
+						particles.ADD_TYPE = WATER_VAPOR;
+						break;
 					}
 				}
 			}

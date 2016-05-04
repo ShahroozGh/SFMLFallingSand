@@ -23,7 +23,7 @@ ParticleBase::ParticleBase(Element p_type, int p_x, int p_y)
 		life = -1;
 	}
 
-	
+	/*
 	if (type == AIR)
 		color = sf::Color::Black;
 	else if (type == SAND)
@@ -46,6 +46,9 @@ ParticleBase::ParticleBase(Element p_type, int p_x, int p_y)
 		color = sf::Color::Magenta;
 	else
 		color = sf::Color::Red;
+		*/
+
+	color = COLOR_MAP[type];
 }
 
 

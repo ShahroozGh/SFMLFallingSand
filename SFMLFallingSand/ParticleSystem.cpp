@@ -121,8 +121,8 @@ void ParticleSystem::putOut(int x, int y)
 {
 	grid[x][y].isBurning = false;
 	grid[x][y].life = -1;
-	grid[x][y].color = sf::Color(100, 45, 0);
-	updateTileColor(x,y,WOOD);
+	grid[x][y].color = COLOR_MAP[grid[x][y].type];
+	updateTileColor(x,y,grid[x][y].type);
 }
 
 void ParticleSystem::updateTileColor(int x, int y, Element type)
@@ -337,6 +337,59 @@ void ParticleSystem::update()
 				}
 			}
 
+			else if (curr.type == WATER_VAPOR) {
+
+				//Attempt to move up
+				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
+					swap(x, y, x, y - 1);
+				}
+
+				//Check if diagonals are open
+				//Attempt to go diagonal up
+				if (grid[x + 1][y - 1].type == AIR || grid[x - 1][y - 1].type == AIR) {
+					int random = rand() % 2;
+
+					if (random == 0) {
+						if (grid[x + 1][y - 1].type == AIR)
+							swap(x, y, x + 1, y - 1);
+					}
+					else {
+						if (grid[x - 1][y - 1].type == AIR)
+							swap(x, y, x - 1, y - 1);
+					}
+				}
+
+				//Attempt to go sideways
+				if (grid[x + 1][y].type == AIR || grid[x - 1][y].type == AIR) {
+					int random = rand() % 2;
+
+					if (random == 0) {
+						if (grid[x + 1][y].type == AIR)
+							swap(x, y, x + 1, y);
+					}
+					else {
+						if (grid[x - 1][y].type == AIR)
+							swap(x, y, x - 1, y);
+					}
+				}
+				
+				
+				int random = rand() % 1000;
+				//Attempt condensation
+				if (DENSITY_MAP[grid[x - 1][y].type] == 1.0f && random < 2) {
+					replace(x, y, WATER);
+				}
+				else if (DENSITY_MAP[grid[x + 1][y].type] == 1.0f && random < 4) {
+					replace(x, y, WATER);
+				}
+				else if (DENSITY_MAP[grid[x][y + 1].type] == 1.0f && random < 6) {
+					replace(x, y, WATER);
+				}
+				else if (DENSITY_MAP[grid[x][y - 1].type] == 1.0f && random < 8) {
+					replace(x, y, WATER);
+				}
+				
+			}
 			else if (curr.type == SAND) {
 
 				//Gravity
@@ -376,15 +429,22 @@ void ParticleSystem::update()
 				if (grid[x - 1][y].type == FIRE)
 					replace(x - 1, y, AIR);
 
-				if (grid[x][y + 1].isBurning)
-					putOut(x,y + 1);
-				if (grid[x][y - 1].isBurning)
+				if (grid[x][y + 1].isBurning) {
+					putOut(x, y + 1);
+					replace(x, y, WATER_VAPOR);
+				}
+				if (grid[x][y - 1].isBurning) {
 					putOut(x, y - 1);
-				if (grid[x + 1][y].isBurning)
+					replace(x, y, WATER_VAPOR);
+				}
+				if (grid[x + 1][y].isBurning) {
 					putOut(x + 1, y);
-				if (grid[x - 1][y].isBurning)
+					replace(x, y, WATER_VAPOR);
+				}
+				if (grid[x - 1][y].isBurning) {
 					putOut(x - 1, y);
-				
+					replace(x, y, WATER_VAPOR);
+				}
 
 				//Gravity
 				if (DENSITY_MAP[grid[x][y + 1].type] < DENSITY_MAP[curr.type]) {
