@@ -24,6 +24,7 @@ ButtonGroup::ButtonGroup()
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
+	buttons.push_back(ButtonBase());
 
 	buttons[0].setPosition(sf::Vector2f(10,20));
 	buttons[0].setColor(sf::Color::Yellow);

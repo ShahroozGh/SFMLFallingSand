@@ -234,7 +234,11 @@ void ParticleSystem::update()
 				updateTileColor(x, y, WOOD);
 
 				if (grid[x][y].life == 0) {
-					replace(x,y, AIR);
+					int randomSpawn = rand() % 100;
+					if (randomSpawn <= 20)
+						replace(x, y, ASH);
+					else
+						replace(x, y, AIR);
 					continue;
 				}
 
@@ -337,6 +341,7 @@ void ParticleSystem::update()
 				}
 			}
 
+
 			else if (curr.type == WATER_VAPOR) {
 
 				//Attempt to move up
@@ -390,6 +395,30 @@ void ParticleSystem::update()
 				}
 				
 			}
+			else if (curr.type == ASH) {
+
+				//Gravity
+				if (DENSITY_MAP[grid[x][y + 1].type] < DENSITY_MAP[curr.type]) {
+					swap(x, y, x, y + 1);
+				}
+				else if (DENSITY_MAP[grid[x][y + 1].type] >= DENSITY_MAP[curr.type]) {
+					if (grid[x + 1][y + 1].type == AIR || grid[x - 1][y + 1].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y + 1].type == AIR)
+								swap(x, y, x + 1, y + 1);
+						}
+						else {
+							if (grid[x - 1][y + 1].type == AIR)
+								swap(x, y, x - 1, y + 1);
+						}
+
+					}
+				}
+
+			}
+
 			else if (curr.type == SAND) {
 
 				//Gravity

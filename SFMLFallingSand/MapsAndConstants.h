@@ -16,7 +16,7 @@ static std::map<Element, sf::Color> COLOR_MAP = {
 	{ FIRE, sf::Color::Red },
 	{ EMBER, sf::Color(200,70,0) },
 	{ SMOKE, sf::Color(100, 100, 100) },
-	{ ASH, sf::Color(180, 180, 180) },
+	{ ASH, sf::Color(50, 50, 50) },
 	{ WOOD, sf::Color(100, 45, 0) },
 	{ BORDER, sf::Color::Magenta } };
 
@@ -24,7 +24,7 @@ static std::map<Element, sf::Color> COLOR_MAP = {
 static std::map<Element, float> DENSITY_MAP = {
 	{ AIR, 0.f },
 	{ SAND, 0.7f },
-	{ WATER, 0.3f },
+	{ WATER, 0.4f },
 	{ WATER_VAPOR, -0.1f },
 	{ STONE, 1.0f},
 	{ ICE, 1.f },
@@ -32,7 +32,7 @@ static std::map<Element, float> DENSITY_MAP = {
 	{ FIRE, -0.1f },
 	{ EMBER, 0.5f },
 	{ SMOKE, -0.1f },
-	{ ASH, 0.6f },
+	{ ASH, 0.3f },
 	{ WOOD, 1.0f },
 	{ BORDER, 99.f} };
 
