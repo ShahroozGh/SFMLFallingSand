@@ -14,7 +14,7 @@ static std::map<Element, sf::Color> COLOR_MAP = {
 	{ ICE, sf::Color(140, 255, 255) },
 	{ SPOUT, sf::Color(0, 0, 200) },
 	{ FIRE, sf::Color::Red },
-	{ EMBER, sf::Color(200,70,0) },
+	{ EMBER, sf::Color(255,185,115) },
 	{ SMOKE, sf::Color(100, 100, 100) },
 	{ ASH, sf::Color(50, 50, 50) },
 	{ WOOD, sf::Color(100, 45, 0) },

@@ -237,6 +237,8 @@ void ParticleSystem::update()
 					int randomSpawn = rand() % 100;
 					if (randomSpawn <= 20)
 						replace(x, y, ASH);
+					else if (randomSpawn > 20 && randomSpawn < 25)
+						replace(x, y, EMBER);
 					else
 						replace(x, y, AIR);
 					continue;
@@ -304,7 +306,7 @@ void ParticleSystem::update()
 					ignite(x, y + 1);
 				}
 
-				//Reverse gravity
+				//Reverse gravity--Does nothing right now
 				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
 					swap(x, y, x, y - 1);
 				}
@@ -395,6 +397,59 @@ void ParticleSystem::update()
 				}
 				
 			}
+			else if (curr.type == EMBER) {
+
+				//Gravity
+				if (DENSITY_MAP[grid[x][y + 1].type] < DENSITY_MAP[curr.type]) {
+					//swap(x, y, x, y + 1);
+
+					//Attempt to go diagonal down
+					if (grid[x + 1][y + 1].type == AIR || grid[x - 1][y + 1].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y + 1].type == AIR)
+								swap(x, y, x + 1, y + 1);
+						}
+						else {
+							if (grid[x - 1][y + 1].type == AIR)
+								swap(x, y, x - 1, y + 1);
+						}
+					}
+
+					//Attempt to go sideways
+					if (grid[x + 1][y].type == AIR || grid[x - 1][y].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y].type == AIR)
+								swap(x, y, x + 1, y);
+						}
+						else {
+							if (grid[x - 1][y].type == AIR)
+								swap(x, y, x - 1, y);
+						}
+					}
+
+				}
+				if (DENSITY_MAP[grid[x][y + 1].type] >= DENSITY_MAP[curr.type]) {
+					if (grid[x + 1][y + 1].type == AIR || grid[x - 1][y + 1].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y + 1].type == AIR)
+								swap(x, y, x + 1, y + 1);
+						}
+						else {
+							if (grid[x - 1][y + 1].type == AIR)
+								swap(x, y, x - 1, y + 1);
+						}
+
+					}
+				}
+
+			}
+
 			else if (curr.type == ASH) {
 
 				//Gravity
@@ -445,7 +500,7 @@ void ParticleSystem::update()
 				}
 				
 			}
-
+			
 			else if (curr.type == WATER) {
 				
 				//Check to put out any fire/decrease temperature
@@ -479,9 +534,9 @@ void ParticleSystem::update()
 				if (DENSITY_MAP[grid[x][y + 1].type] < DENSITY_MAP[curr.type]) {
 					swap(x, y, x, y + 1);
 				}
-				else if (grid[x][y + 1].type == WATER) {
+				else if (DENSITY_MAP[grid[x][y + 1].type] >= DENSITY_MAP[curr.type]) {
 					//Attempt to go diagonal down
-					if (grid[x + 1][y + 1].type == AIR || grid[x - 1][y + 1].type == AIR) {
+					if (DENSITY_MAP[grid[x + 1][y + 1].type] < DENSITY_MAP[WATER] || DENSITY_MAP[grid[x - 1][y + 1].type] < DENSITY_MAP[WATER]) {
 						int random = rand() % 2;
 
 						if (random == 0) {
@@ -495,7 +550,7 @@ void ParticleSystem::update()
 					}
 
 					//Attempt to go sideways
-					if (grid[x + 1][y].type == AIR || grid[x - 1][y].type == AIR) {
+					if (DENSITY_MAP[grid[x + 1][y].type] < DENSITY_MAP[WATER] || DENSITY_MAP[grid[x - 1][y].type] < DENSITY_MAP[WATER]) {
 						int random = rand() % 2;
 
 						if (random == 0) {
