@@ -8,11 +8,15 @@ public:
 	~ButtonBase();
 
 	void draw(sf::RenderWindow &targetWindow);
+	bool checkIfClicked(sf::Vector2f mouseCoords);
+
 	void setPosition(sf::Vector2f pos);
+	void setSize(sf::Vector2f newSize);
 	void setColor(sf::Color color);
 	void setSelectedColor(sf::Color color);
 	void setSelected(bool select);
-	bool checkIfClicked(sf::Vector2f mouseCoords);
+
+	sf::Vector2f getSize();
 
 private:
 	sf::Vector2f position;

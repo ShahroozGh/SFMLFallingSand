@@ -26,41 +26,24 @@ ButtonGroup::ButtonGroup()
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
 
-	buttons[0].setPosition(sf::Vector2f(10,20));
 	buttons[0].setColor(sf::Color::Yellow);
-	buttons[0].setSelectedColor(sf::Color::White);
-
-	buttons[1].setPosition(sf::Vector2f(70, 20));
 	buttons[1].setColor(sf::Color::Blue);
-	buttons[1].setSelectedColor(sf::Color::White);
-
-	buttons[2].setPosition(sf::Vector2f(130, 20));
 	buttons[2].setColor(sf::Color(211, 211, 211));
-	buttons[2].setSelectedColor(sf::Color::White);
-
-	buttons[3].setPosition(sf::Vector2f(190, 20));
 	buttons[3].setColor(sf::Color(140, 255, 255));
-	buttons[3].setSelectedColor(sf::Color::White);
-
-	buttons[4].setPosition(sf::Vector2f(250, 20));
 	buttons[4].setColor(sf::Color(0, 0, 200));
-	buttons[4].setSelectedColor(sf::Color::White);
-
-	buttons[5].setPosition(sf::Vector2f(310, 20));
 	buttons[5].setColor(sf::Color::Red);
-	buttons[5].setSelectedColor(sf::Color::White);
-
-	buttons[6].setPosition(sf::Vector2f(370, 20));
 	buttons[6].setColor(sf::Color(100,45,0));
-	buttons[6].setSelectedColor(sf::Color::White);
-
-	buttons[7].setPosition(sf::Vector2f(430, 20));
 	buttons[7].setColor(COLOR_MAP[WATER_VAPOR]);
-	buttons[7].setSelectedColor(sf::Color::White);
-
-	buttons[8].setPosition(sf::Vector2f(490, 20));
 	buttons[8].setColor(sf::Color::Magenta);
-	buttons[8].setSelectedColor(sf::Color::White);
+
+	int y = 20;
+	for (int i = 0; i < buttons.size(); i++) {
+		
+		if (10 + i*buttons[i].getSize().x > 650)
+			y += buttons[i].getSize().y + 2;
+		buttons[i].setPosition(sf::Vector2f(10 + i*(buttons[i].getSize().x + 2), 20));
+		buttons[i].setSelectedColor(sf::Color::White);
+	}
 
 
 	
