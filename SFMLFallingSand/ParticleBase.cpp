@@ -13,7 +13,7 @@ ParticleBase::ParticleBase(Element p_type, int p_x, int p_y)
 	y = p_y;
 	moved = false;
 	life = -1;
-	temperature = 0;
+	temperature = AMBIENT_TEMP_MAP[type];
 	isBurning = false;
 
 	if (p_type == FIRE) {

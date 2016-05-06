@@ -15,6 +15,9 @@ public:
 
 	Element ADD_TYPE;
 
+	bool SHOW_TEMP_COLOR;
+	bool USE_GRAY_SCALE_TEMP;
+
 
 private:
 
@@ -30,16 +33,7 @@ private:
 		target.draw(m_vertices, states);
 	}
 
-	struct Particle {
-		int type;
-		sf::Vector2i position;
-	};
-
-	std::vector<Particle> m_particles;
 	sf::VertexArray m_vertices;
-	sf::Time m_lifetime;
-	sf::Vector2f m_emitter;
-
 	
 	std::vector<std::vector<ParticleBase> > grid;
 
@@ -51,6 +45,7 @@ private:
 
 	void initVerticies();
 
+	
 
 	void swap(int x1, int y1, int x2, int y2);
 	void replace(int x1, int y1, Element type);
@@ -59,6 +54,7 @@ private:
 	void putOut(int x, int y);
 
 	void updateTileColor(int x, int y, Element type);
+	sf::Color tempToColor(float temp);
 
 	//Returns true if e1 more dense than e2
 	bool isMoreDense(Element e1, Element e2);

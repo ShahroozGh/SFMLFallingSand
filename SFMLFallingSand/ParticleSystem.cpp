@@ -12,6 +12,8 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::ParticleSystem(int winWidth, int winHeight)
 {
+	SHOW_TEMP_COLOR = true;
+	USE_GRAY_SCALE_TEMP = true;
 	ADD_TYPE = WATER;
 
 	TILE_SIZE = 2;
@@ -31,14 +33,14 @@ ParticleSystem::ParticleSystem(int winWidth, int winHeight)
 	for (int x = 0; x < WIN_TILE_WIDTH; x++) {
 		grid.push_back(std::vector<ParticleBase>(WIN_TILE_HEIGHT));
 		for (int y = 0; y < WIN_TILE_HEIGHT; y++) {
-			if (x == 10 && y == 50)
-				grid[x][y] = ParticleBase(SAND, x, y);
+			if (x == 100 && y == 100)
+				grid[x][y] = ParticleBase(STONE, x, y);
 			else if (x == 0 || x == WIN_TILE_WIDTH - 1 || y == 0 || y == WIN_TILE_HEIGHT - 1) {
 				grid[x][y] = ParticleBase(BORDER, x, y);
 			}
-			else if (y <= 350/2) {
-				grid[x][y] = ParticleBase(WATER, x, y);
-			}
+			//else if (y <= 350/2) {
+			//	grid[x][y] = ParticleBase(WATER, x, y);
+			//}
 			else
 				grid[x][y] = ParticleBase(AIR, x, y);
 		}
@@ -128,41 +130,27 @@ void ParticleSystem::putOut(int x, int y)
 void ParticleSystem::updateTileColor(int x, int y, Element type)
 {
 	sf::Color color;
-	/*
-	if (type == AIR)
-		color = sf::Color::Black;
-	else if (type == SAND)
-		color = sf::Color::Yellow;
-	else if (type == WATER)
-		color = sf::Color::Blue;
-	else if (type == STONE)
-		color = sf::Color(211, 211, 211); //Light grey
-	else if (type == ICE)
-		color = sf::Color(140, 255, 255); //Very close to white
-	else if (type == SPOUT)
-		color = sf::Color(0, 0, 200); //Bluish
-	else if (type == BORDER)
-		color = sf::Color::Magenta;
-	else if (type == FIRE)
-		color = sf::Color::Red;
-	else
-		color = sf::Color::Red;
-		*/
-	int life = grid[x][y].life;
-	if (type == FIRE) {
-		//Update color to match life time
-		//Max life for fire is 20, min is 0
-		//Red 255,0,0 -> Yellow 255,255,0 ->White 255,255,255
+	
+	if (!SHOW_TEMP_COLOR) {
+		int life = grid[x][y].life;
+		if (type == FIRE) {
+			//Update color to match life time
+			//Max life for fire is 20, min is 0
+			//Red 255,0,0 -> Yellow 255,255,0 ->White 255,255,255
 
-		grid[x][y].color = sf::Color(255, 12*life, 0.6*std::pow(life,2));
+			grid[x][y].color = sf::Color(255, 12 * life, 0.6*std::pow(life, 2));
+
+		}
+		if (grid[x][y].isBurning) {
+			grid[x][y].color.g = grid[x][y].color.g / 4;
+
+		}
+		color = grid[x][y].color;
+	}
+	else {
+		color = tempToColor(grid[x][y].temperature);
 	
 	}
-	if (grid[x][y].isBurning) {
-		grid[x][y].color.g = grid[x][y].color.g / 4;
-	
-	}
-	color = grid[x][y].color;
-
 	sf::Vertex* quad = getQuad(x, y);
 
 	//Set colors
@@ -172,6 +160,45 @@ void ParticleSystem::updateTileColor(int x, int y, Element type)
 	quad[2].color = color;
 	quad[3].color = color;
 
+}
+
+sf::Color ParticleSystem::tempToColor(float temp)
+{
+	sf::Color color;
+
+	if (!USE_GRAY_SCALE_TEMP) {
+		//260 -> 1000
+
+		int val = (int)((255.f / 970.f)*(temp - 30.0f));
+
+		color = sf::Color(val, val, val);
+	}
+	else {
+	
+		float max = 1000.0f;
+		float min = 0.0f;
+		float mid = (max - min) / 2.0f;
+		
+		float r, g, b;
+
+		if (temp <= mid) {
+			r = 0.0f;
+			g = (255.0f / (mid - min))*(temp - min);
+			b = 255.0f - g;
+		}
+		else {
+			r = (255.0f / (max - mid))*(temp - mid);
+			g = 255.0f - r;
+			b = 0.0f;
+		}
+
+		color = sf::Color((int)r, (int)g, (int)b);
+	
+	
+	}
+	if (temp == -1.0f)
+		color = sf::Color::Magenta;
+	return color;
 }
 
 
@@ -643,39 +670,63 @@ void ParticleSystem::update()
 	}
 
 	
-	//Reset moved flags
+	//Reset moved flags + Update temperature
 	for (int x = 0; x < WIN_TILE_WIDTH; x++) {
 		for (int y = 0; y < WIN_TILE_HEIGHT; y++) {
 			grid[x][y].moved = false;
-			/*
-			int type = grid[x][y].type;
-			sf::Color color;
-			if (type == AIR)
-				color = sf::Color::Black;
-			else if (type == SAND)
-				color = sf::Color::Yellow;
-			else if (type == WATER)
-				color = sf::Color::Blue;
-			else if (type == STONE)
-				color = sf::Color(211, 211, 211); //Light grey
-			else if (type == ICE)
-				color = sf::Color(140, 255, 255); //Very close to white
-			else if (type == SPOUT)
-				color = sf::Color(0, 0, 200); //Bluish
-			else if (type == BORDER)
-				color = sf::Color::Magenta;
+			
+			//Only perform temp changes with Right and bottom tile (because will move left to right top to bottom)
+			//This avoids performing energy transfer between two tiles twice
+
+			if (grid[x][y].type == BORDER)
+				continue;
+
+			
+
+			//Transfer algo
+			//Take difference between two temperatures
+			//0.001 to determine baseline speed of transfer (tweaked based on frame rate)
+			// dt0 = 0.0001 * (t1 - t0) * RES1 * RES2 
+			// dt1 = -dt0 
+			
+
+			//Check right tile
+			float t0 = grid[x][y].temperature;
+			float t1 = grid[x + 1][y].temperature;
+
+			//delta dt0 right contribution
+			float dt0_r;
+			if (grid[x + 1][y].type != BORDER)
+				dt0_r = 0.01f * (t1 - t0) * TEMP_COEFF_MAP[grid[x][y].type] * TEMP_COEFF_MAP[grid[x + 1][y].type];
 			else
-				color = sf::Color::Red;
+				dt0_r = 0;
 
-			sf::Vertex* quad = getQuad(x, y);
+			//Check bottom tile
+			t1 = grid[x][y + 1].temperature;
 
-			//Set colors
-			// define its 4 corners
-			quad[0].color = color;
-			quad[1].color = color;
-			quad[2].color = color;
-			quad[3].color = color;
-			*/
+			//delta dt0 bottom contribution
+			float dt0_b;
+			if (grid[x][y + 1].type != BORDER)
+				dt0_b = 0.01f * (t1 - t0) * TEMP_COEFF_MAP[grid[x][y].type] * TEMP_COEFF_MAP[grid[x][y + 1].type];
+			else
+				dt0_b = 0;
+
+			
+			//Update all three temperatures
+			grid[x][y].temperature += dt0_r + dt0_b;
+			if (grid[x + 1][y].type != BORDER)
+				grid[x + 1][y].temperature += (-1.0f) * dt0_r;
+			if (grid[x][y + 1].type != BORDER)
+				grid[x][y + 1].temperature += (-1.0f) * dt0_b;
+				
+
+			
+			if (SHOW_TEMP_COLOR) {
+				updateTileColor(x,y,AIR);
+			}
+
+
+
 			
 		}
 		
