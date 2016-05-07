@@ -67,10 +67,10 @@ static std::map<Element, float> AMBIENT_TEMP_MAP = {
 	{ SAND, 290.0f },
 	{ WATER, 290.0f },
 	{ WATER_VAPOR, 30.0f },
-	{ STONE, 1000.0f },
+	{ STONE, 290.0f },
 	{ ICE, 273.0f },
 	{ SPOUT, 290.0f },
-	{ FIRE, 1000.0f },
+	{ FIRE, 500.0f },
 	{ EMBER, 700.0f },
 	{ SMOKE, 320.0f },
 	{ ASH, 290.0f },
@@ -78,17 +78,33 @@ static std::map<Element, float> AMBIENT_TEMP_MAP = {
 	{ BORDER, -1.0f } };
 
 //Determines resistance to change/transfer of temperature
+//Heat Conductivity
 static std::map<Element, float> TEMP_COEFF_MAP = {
-	{ AIR, 1.0f },
+	{ AIR, 0.01f },
 	{ SAND, 1.0f },
-	{ WATER, 1.0f },
+	{ WATER, 5.0f },
 	{ WATER_VAPOR, 1.0f },
-	{ STONE, 5.0f },
-	{ ICE, 1.0f },
+	{ STONE, 1.0f },
+	{ ICE, 5.0f },
 	{ SPOUT, 1.0f },
-	{ FIRE, 10.0f },
+	{ FIRE, 5.0f },
 	{ EMBER, 1.0f },
 	{ SMOKE, 1.0f },
 	{ ASH, 1.0f },
 	{ WOOD, 1.0f },
 	{ BORDER, -1.0f } };
+
+
+//Point of phase change between solid and liquid
+static std::map<Element, float> SOLID_LIQUID_POINT = {
+	{ SAND, 900.0f },
+	{ WATER, 273.0f },
+	{ ICE, 273.0f },
+	{ STONE, 900.0f },
+	{ BORDER, -1.0f } };
+
+static std::map<Element, float> GAS_LIQUID_POINT = {
+	{ WATER, 373.0f },
+	{ WATER_VAPOR, 373.0f },
+	{ BORDER, -1.0f } };
+

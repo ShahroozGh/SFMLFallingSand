@@ -11,7 +11,10 @@ public:
 	~ParticleSystem();
 
 	void update();
+	void refreshScreen();
 	void addParticles(int x, int y, int brushSize);
+
+	float getTempFromMouse(int x, int y);
 
 	Element ADD_TYPE;
 

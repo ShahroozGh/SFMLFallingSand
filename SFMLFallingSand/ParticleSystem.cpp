@@ -192,6 +192,8 @@ sf::Color ParticleSystem::tempToColor(float temp)
 			b = 0.0f;
 		}
 
+
+
 		color = sf::Color((int)r, (int)g, (int)b);
 	
 	
@@ -223,6 +225,15 @@ void ParticleSystem::addParticles(int x, int y, int brushSize)
 
 	}
 	
+}
+
+float ParticleSystem::getTempFromMouse(int x, int y)
+{
+	int xT = (x - (x % TILE_SIZE)) / TILE_SIZE;
+	int yT = (y - (y % TILE_SIZE)) / TILE_SIZE;
+
+	return grid[xT][yT].temperature;
+
 }
 
 sf::Vertex * ParticleSystem::getQuad(int x, int y)
@@ -683,9 +694,14 @@ void ParticleSystem::update()
 
 			
 
-			//Transfer algo
+			//Transfer algo 1
 			//Take difference between two temperatures
 			//0.001 to determine baseline speed of transfer (tweaked based on frame rate)
+			// dt0 = 0.0001 * (t1 - t0) * RES1 * RES2 
+			// dt1 = -dt0 
+
+
+			//Transfer algo 2
 			// dt0 = 0.0001 * (t1 - t0) * RES1 * RES2 
 			// dt1 = -dt0 
 			
@@ -732,6 +748,18 @@ void ParticleSystem::update()
 		
 	}
 	
+}
+
+
+//refresh screen
+void ParticleSystem::refreshScreen()
+{
+	for (int x = 0; x < WIN_TILE_WIDTH; x++) {
+		for (int y = 0; y < WIN_TILE_HEIGHT; y++) {
+			updateTileColor(x,y,grid[x][y].type);
+		}
+	}
+
 }
 
 

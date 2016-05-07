@@ -11,8 +11,12 @@ public:
 	~ButtonGroup();
 
 	std::vector<ButtonBase> buttons;
+	std::vector<sf::RectangleShape> tempScale;
+
 	void draw(sf::RenderWindow & renderWindow);
 	bool onClick(sf::Vector2f mouseCoords);
+
+	sf::Color tempToColor(float temp);
 	
 	int selectedButton;
 

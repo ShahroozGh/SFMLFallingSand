@@ -54,16 +54,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	fpsLabel.setFont(font);
 
-	sf::Text numOfParticlesLabel;
-	numOfParticlesLabel.setPosition(sf::Vector2f(600, 40));
+	sf::Text temperatureLabel;
+	temperatureLabel.setPosition(sf::Vector2f(550, 40));
 	// set the string to display
-	numOfParticlesLabel.setString("Particles: ");
+	temperatureLabel.setString("Temperature: ");
 	// set the character size
-	numOfParticlesLabel.setCharacterSize(12); // in pixels, not points!
+	temperatureLabel.setCharacterSize(12); // in pixels, not points!
 								   // set the color
-	numOfParticlesLabel.setColor(sf::Color::White);
+	temperatureLabel.setColor(sf::Color::White);
 
-	numOfParticlesLabel.setFont(font);
+	temperatureLabel.setFont(font);
 
 	//Game loop
 	bool buttonHit = false;
@@ -151,6 +151,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				case sf::Keyboard::Num6:
 					particles.ADD_TYPE = FIRE;
 					break;
+				case sf::Keyboard::Space:
+					particles.SHOW_TEMP_COLOR = !particles.SHOW_TEMP_COLOR;
+					particles.refreshScreen();
+					break;
 				}
 			}
 
@@ -164,7 +168,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			int brushSize = 5;
 			particles.addParticles(localPosition.x, localPosition.y, brushSize);
 		}
-
+		
+		//update temperature text field
+		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+		temperatureLabel.setString("Temperature: " + std::to_string(particles.getTempFromMouse(mousePos.x, mousePos.y)));
 		
 		particles.update();
 
@@ -179,14 +186,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		window.draw(elapsedTime);
 		window.draw(fpsLabel);
-		window.draw(numOfParticlesLabel);
+		window.draw(temperatureLabel);
 
 		window.display();
 
 		sf::Time elapsed = clock.restart();
 		elapsedTime.setString("Time:" + std::to_string(elapsed.asMilliseconds()));
 		fpsLabel.setString("FPS:" + std::to_string(1000.0f / elapsed.asMilliseconds()));
-		numOfParticlesLabel.setString("Particles:");
+		
 
 
 

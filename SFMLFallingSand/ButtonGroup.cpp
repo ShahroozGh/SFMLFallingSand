@@ -46,6 +46,18 @@ ButtonGroup::ButtonGroup()
 	}
 
 
+	//Set up temp scale
+	for (int i = 0; i < 20; i++){
+	
+		tempScale.push_back(sf::RectangleShape());
+
+		tempScale[i].setSize(sf::Vector2f(10,10));
+		tempScale[i].setPosition(sf::Vector2f(10 + i * 10, 50));
+		tempScale[i].setFillColor(tempToColor(50.f * i));
+
+	}
+	
+
 	
 	
 }
@@ -62,6 +74,9 @@ void ButtonGroup::draw(sf::RenderWindow & renderWindow)
 
 	for (int i = 0; i < buttons.size(); i++)
 		buttons[i].draw(renderWindow);
+
+	for (int i = 0; i < tempScale.size(); i++)
+		renderWindow.draw(tempScale[i]);
 }
 
 bool ButtonGroup::onClick(sf::Vector2f mouseCoords)
@@ -85,3 +100,33 @@ bool ButtonGroup::onClick(sf::Vector2f mouseCoords)
 	}
 	
 }
+
+sf::Color ButtonGroup::tempToColor(float temp)
+{
+	sf::Color color;
+
+	
+		float max = 1000.0f;
+		float min = 0.0f;
+		float mid = (max - min) / 2.0f;
+
+		float r, g, b;
+
+		if (temp <= mid) {
+			r = 0.0f;
+			g = (255.0f / (mid - min))*(temp - min);
+			b = 255.0f - g;
+		}
+		else {
+			r = (255.0f / (max - mid))*(temp - mid);
+			g = 255.0f - r;
+			b = 0.0f;
+		}
+
+
+
+		color = sf::Color((int)r, (int)g, (int)b);
+
+	return color;
+}
+
