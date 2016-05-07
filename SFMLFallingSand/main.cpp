@@ -155,6 +155,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					particles.SHOW_TEMP_COLOR = !particles.SHOW_TEMP_COLOR;
 					particles.refreshScreen();
 					break;
+				case sf::Keyboard::T:
+					particles.USE_TEMPERATURE_MODEL = !particles.USE_TEMPERATURE_MODEL;
+					break;
 				}
 			}
 
@@ -166,13 +169,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			sf::Vector2i localPosition = sf::Mouse::getPosition(window); // window is a sf::Window
 			// left mouse button is pressed:
 			int brushSize = 5;
-			particles.addParticles(localPosition.x, localPosition.y, brushSize);
+			if (localPosition.x < 700 && localPosition.x > 0 && localPosition.y < 700 && localPosition.y > 0)
+				particles.addParticles(localPosition.x, localPosition.y, brushSize);
 		}
 		
 		//update temperature text field
 		sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-		temperatureLabel.setString("Temperature: " + std::to_string(particles.getTempFromMouse(mousePos.x, mousePos.y)));
-		
+		if(mousePos.x < 700 && mousePos.x > 0 && mousePos.y < 700 && mousePos.y > 0)
+			if(particles.USE_TEMPERATURE_MODEL)
+				temperatureLabel.setString("**Temperature: " + std::to_string(particles.getTempFromMouse(mousePos.x, mousePos.y)));
+			else
+				temperatureLabel.setString("Temperature: " + std::to_string(particles.getTempFromMouse(mousePos.x, mousePos.y)));
 		particles.update();
 
 		window.clear();

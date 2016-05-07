@@ -66,9 +66,9 @@ static std::map<Element, float> AMBIENT_TEMP_MAP = {
 	{ AIR, 290.0f },
 	{ SAND, 290.0f },
 	{ WATER, 290.0f },
-	{ WATER_VAPOR, 30.0f },
+	{ WATER_VAPOR, 450.0f },
 	{ STONE, 290.0f },
-	{ ICE, 273.0f },
+	{ ICE, 250.0f },
 	{ SPOUT, 290.0f },
 	{ FIRE, 500.0f },
 	{ EMBER, 700.0f },
@@ -107,4 +107,7 @@ static std::map<Element, float> GAS_LIQUID_POINT = {
 	{ WATER, 373.0f },
 	{ WATER_VAPOR, 373.0f },
 	{ BORDER, -1.0f } };
+
+static std::map<Element, float> IGNITION_POINT = {
+	{ WOOD, 400.0f }};
 

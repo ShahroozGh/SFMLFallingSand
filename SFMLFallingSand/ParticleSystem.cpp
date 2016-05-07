@@ -14,6 +14,7 @@ ParticleSystem::ParticleSystem(int winWidth, int winHeight)
 {
 	SHOW_TEMP_COLOR = true;
 	USE_GRAY_SCALE_TEMP = true;
+	USE_TEMPERATURE_MODEL = false;
 	ADD_TYPE = WATER;
 
 	TILE_SIZE = 2;
@@ -330,19 +331,23 @@ void ParticleSystem::update()
 				}
 
 				int random = rand() % 100;
-				//Check if it can set anything on fire
-				if (grid[x - 1][y].type == WOOD && random < 5) {
-					ignite(x - 1, y);
+
+				if (!USE_TEMPERATURE_MODEL) {
+					//Check if it can set anything on fire
+					if (grid[x - 1][y].type == WOOD && random < 5) {
+						ignite(x - 1, y);
+					}
+					else if (grid[x][y - 1].type == WOOD && random < 10) {
+						ignite(x, y - 1);
+					}
+					else if (grid[x + 1][y].type == WOOD && random < 10) {
+						ignite(x + 1, y);
+					}
+					else if (grid[x][y + 1].type == WOOD && random < 15) {
+						ignite(x, y + 1);
+					}
 				}
-				else if (grid[x][y - 1].type == WOOD && random < 10) {
-					ignite(x, y - 1);
-				}
-				else if (grid[x + 1][y].type == WOOD && random < 10) {
-					ignite(x + 1, y);
-				}
-				else if (grid[x][y + 1].type == WOOD && random < 15) {
-					ignite(x, y + 1);
-				}
+				
 
 				//Reverse gravity--Does nothing right now
 				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
@@ -384,6 +389,29 @@ void ParticleSystem::update()
 
 			else if (curr.type == WATER_VAPOR) {
 
+
+				if (!USE_TEMPERATURE_MODEL) {
+					int random = rand() % 1000;
+					//Attempt condensation
+					if (DENSITY_MAP[grid[x - 1][y].type] == 1.0f && random < 2) {
+						replace(x, y, WATER);
+					}
+					else if (DENSITY_MAP[grid[x + 1][y].type] == 1.0f && random < 4) {
+						replace(x, y, WATER);
+					}
+					else if (DENSITY_MAP[grid[x][y + 1].type] == 1.0f && random < 6) {
+						replace(x, y, WATER);
+					}
+					else if (DENSITY_MAP[grid[x][y - 1].type] == 1.0f && random < 8) {
+						replace(x, y, WATER);
+					}
+				}
+				else {
+					if (grid[x][y].temperature < GAS_LIQUID_POINT[WATER_VAPOR]) {
+						replace(x, y, WATER);
+					}
+				}
+
 				//Attempt to move up
 				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
 					swap(x, y, x, y - 1);
@@ -419,20 +447,6 @@ void ParticleSystem::update()
 				}
 				
 				
-				int random = rand() % 1000;
-				//Attempt condensation
-				if (DENSITY_MAP[grid[x - 1][y].type] == 1.0f && random < 2) {
-					replace(x, y, WATER);
-				}
-				else if (DENSITY_MAP[grid[x + 1][y].type] == 1.0f && random < 4) {
-					replace(x, y, WATER);
-				}
-				else if (DENSITY_MAP[grid[x][y + 1].type] == 1.0f && random < 6) {
-					replace(x, y, WATER);
-				}
-				else if (DENSITY_MAP[grid[x][y - 1].type] == 1.0f && random < 8) {
-					replace(x, y, WATER);
-				}
 				
 			}
 			else if (curr.type == EMBER) {
@@ -551,22 +565,37 @@ void ParticleSystem::update()
 				if (grid[x - 1][y].type == FIRE)
 					replace(x - 1, y, AIR);
 
-				if (grid[x][y + 1].isBurning) {
-					putOut(x, y + 1);
-					replace(x, y, WATER_VAPOR);
+				//Two versions of phase change, onle incorperationg temperature model
+				if (!USE_TEMPERATURE_MODEL) {
+					if (grid[x][y + 1].isBurning) {
+						putOut(x, y + 1);
+						replace(x, y, WATER_VAPOR);
+					}
+					if (grid[x][y - 1].isBurning) {
+						putOut(x, y - 1);
+						replace(x, y, WATER_VAPOR);
+					}
+					if (grid[x + 1][y].isBurning) {
+						putOut(x + 1, y);
+						replace(x, y, WATER_VAPOR);
+					}
+					if (grid[x - 1][y].isBurning) {
+						putOut(x - 1, y);
+						replace(x, y, WATER_VAPOR);
+					}
 				}
-				if (grid[x][y - 1].isBurning) {
-					putOut(x, y - 1);
-					replace(x, y, WATER_VAPOR);
+				else {
+					//Check if it should freeze
+					if (grid[x][y].temperature < SOLID_LIQUID_POINT[WATER]) {
+						replace(x, y, ICE);
+					}
+					//Check if it should evaporate
+					if (grid[x][y].temperature > GAS_LIQUID_POINT[WATER]) {
+						replace(x, y, WATER_VAPOR);
+					}
 				}
-				if (grid[x + 1][y].isBurning) {
-					putOut(x + 1, y);
-					replace(x, y, WATER_VAPOR);
-				}
-				if (grid[x - 1][y].isBurning) {
-					putOut(x - 1, y);
-					replace(x, y, WATER_VAPOR);
-				}
+
+
 
 				//Gravity
 				if (DENSITY_MAP[grid[x][y + 1].type] < DENSITY_MAP[curr.type]) {
@@ -611,47 +640,81 @@ void ParticleSystem::update()
 			}
 
 			else if (curr.type == WOOD) {
-				int random = rand() % 100;
-				if (grid[x][y].isBurning) {
-					if (grid[x - 1][y].type == AIR && random < 5) {
-						//grid[x - 1][y] = ParticleBase(WATER, x - 1, y);
-						replace(x - 1, y, FIRE);
+				if (!USE_TEMPERATURE_MODEL) {
+					int random = rand() % 100;
+					if (grid[x][y].isBurning) {
+						if (grid[x - 1][y].type == AIR && random < 5) {
+							//grid[x - 1][y] = ParticleBase(WATER, x - 1, y);
+							replace(x - 1, y, FIRE);
+						}
+						else if (grid[x][y - 1].type == AIR && random < 10) {
+							//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
+							replace(x, y - 1, FIRE);
+						}
+						else if (grid[x + 1][y].type == AIR && random < 10) {
+							//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
+							replace(x + 1, y, FIRE);
+						}
+						else if (grid[x][y + 1].type == AIR && random < 15) {
+							//grid[x][y + 1] = ParticleBase(WATER, x, y + 1);
+							replace(x, y + 1, FIRE);
+						}
+
 					}
-					else if (grid[x][y - 1].type == AIR && random < 10) {
-						//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
-						replace(x, y - 1, FIRE);
+					
+				}
+				else {
+					if (grid[x][y].isBurning) {
+						int random = rand() % 100;
+						if (grid[x - 1][y].type == AIR && random < 5) {
+							//grid[x - 1][y] = ParticleBase(WATER, x - 1, y);
+							replace(x - 1, y, FIRE);
+						}
+						else if (grid[x][y - 1].type == AIR && random < 10) {
+							//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
+							replace(x, y - 1, FIRE);
+						}
+						else if (grid[x + 1][y].type == AIR && random < 10) {
+							//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
+							replace(x + 1, y, FIRE);
+						}
+						else if (grid[x][y + 1].type == AIR && random < 15) {
+							//grid[x][y + 1] = ParticleBase(WATER, x, y + 1);
+							replace(x, y + 1, FIRE);
+						}
+
 					}
-					else if (grid[x + 1][y].type == AIR && random < 10) {
-						//grid[x + 1][y] = ParticleBase(WATER, x + 1, y);
-						replace(x + 1, y, FIRE);
+					else if (grid[x][y].temperature > IGNITION_POINT[WOOD]) {
+						ignite(x, y);
 					}
-					else if (grid[x][y + 1].type == AIR && random < 15) {
-						//grid[x][y + 1] = ParticleBase(WATER, x, y + 1);
-						replace(x, y + 1, FIRE);
-					}
-				
 				}
 
 			}
 
 			else if (curr.type == ICE) {
-				int random = rand() % 100;
+				if (!USE_TEMPERATURE_MODEL) {
+					int random = rand() % 100;
 
-				if (grid[x - 1][y].type == WATER && random < 2) {
-					//grid[x - 1][y] = ParticleBase(ICE, x - 1, y);
-					replace(x-1, y, ICE);
+					if (grid[x - 1][y].type == WATER && random < 2) {
+						//grid[x - 1][y] = ParticleBase(ICE, x - 1, y);
+						replace(x - 1, y, ICE);
+					}
+					else if (grid[x + 1][y].type == WATER && random < 4) {
+						//grid[x + 1][y] = ParticleBase(ICE, x - 1, y);
+						replace(x + 1, y, ICE);
+					}
+					else if (grid[x][y + 1].type == WATER && random < 6) {
+						//grid[x][y + 1] = ParticleBase(ICE, x - 1, y);
+						replace(x, y + 1, ICE);
+					}
+					else if (grid[x][y - 1].type == WATER && random < 8) {
+						//grid[x][y - 1] = ParticleBase(ICE, x - 1, y);
+						replace(x, y - 1, ICE);
+					}
 				}
-				else if(grid[x + 1][y].type == WATER && random < 4){
-					//grid[x + 1][y] = ParticleBase(ICE, x - 1, y);
-					replace(x + 1, y, ICE);
-				}
-				else if (grid[x][y + 1].type == WATER && random < 6) {
-					//grid[x][y + 1] = ParticleBase(ICE, x - 1, y);
-					replace(x, y + 1, ICE);
-				}
-				else if (grid[x][y - 1].type == WATER && random < 8) {
-					//grid[x][y - 1] = ParticleBase(ICE, x - 1, y);
-					replace(x, y - 1, ICE);
+				else {
+					if (grid[x][y].temperature > SOLID_LIQUID_POINT[ICE])
+						replace(x,y,WATER);
 				}
 			}
 

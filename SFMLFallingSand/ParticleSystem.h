@@ -20,6 +20,7 @@ public:
 
 	bool SHOW_TEMP_COLOR;
 	bool USE_GRAY_SCALE_TEMP;
+	bool USE_TEMPERATURE_MODEL;
 
 
 private:
