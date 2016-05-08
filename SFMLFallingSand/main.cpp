@@ -113,6 +113,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					case 7:
 						particles.ADD_TYPE = WATER_VAPOR;
 						break;
+					case 8:
+						particles.ADD_TYPE = HOT_FIRE;
+						break;
+					case 9:
+						particles.ADD_TYPE = LAVA;
+						break;
 					}
 				}
 			}

@@ -2,7 +2,7 @@
 #include <map>
 #include <SFML\Graphics.hpp>
 
-enum Element { AIR, SAND, WATER, WATER_VAPOR, STONE, ICE, SPOUT, FIRE, EMBER, SMOKE, ASH, WOOD, BORDER };
+enum Element { AIR, SAND, WATER, WATER_VAPOR, STONE, ICE, SPOUT, FIRE, HOT_FIRE, EMBER, SMOKE, ASH, WOOD, LAVA, BORDER };
 
 //Contains default colors of all the elements
 static std::map<Element, sf::Color> COLOR_MAP = {
@@ -14,10 +14,12 @@ static std::map<Element, sf::Color> COLOR_MAP = {
 	{ ICE, sf::Color(140, 255, 255) },
 	{ SPOUT, sf::Color(0, 0, 200) },
 	{ FIRE, sf::Color::Red },
+	{ HOT_FIRE, sf::Color::Cyan },
 	{ EMBER, sf::Color(255,185,115) },
 	{ SMOKE, sf::Color(100, 100, 100) },
 	{ ASH, sf::Color(50, 50, 50) },
 	{ WOOD, sf::Color(100, 45, 0) },
+	{ LAVA, sf::Color::Red },
 	{ BORDER, sf::Color::Magenta } };
 
 
@@ -30,10 +32,12 @@ static std::map<Element, float> DENSITY_MAP = {
 	{ ICE, 1.f },
 	{ SPOUT, 1.f },
 	{ FIRE, -0.1f },
+	{ HOT_FIRE, -0.1f },
 	{ EMBER, 0.5f },
 	{ SMOKE, -0.1f },
 	{ ASH, 0.3f },
 	{ WOOD, 1.0f },
+	{ LAVA, 0.8f },
 	{ BORDER, 99.f} };
 
 static std::map<Element, bool> FLAMMABLE_MAP = {
@@ -45,10 +49,12 @@ static std::map<Element, bool> FLAMMABLE_MAP = {
 	{ ICE, false },
 	{ SPOUT, false },
 	{ FIRE, false },
+	{ HOT_FIRE, false },
 	{ EMBER, false },
 	{ SMOKE, false },
 	{ ASH, false},
 	{ WOOD, true },
+	{ LAVA, false },
 	{ BORDER, false } };
 
 //Initial ambient temperatures (similar to kelvin)
@@ -71,27 +77,31 @@ static std::map<Element, float> AMBIENT_TEMP_MAP = {
 	{ ICE, 250.0f },
 	{ SPOUT, 290.0f },
 	{ FIRE, 500.0f },
-	{ EMBER, 700.0f },
+	{ HOT_FIRE, 900.0f },
+	{ EMBER, 800.0f },
 	{ SMOKE, 320.0f },
 	{ ASH, 290.0f },
 	{ WOOD, 290.0f },
+	{ LAVA, 1000.0f },
 	{ BORDER, -1.0f } };
 
 //Determines resistance to change/transfer of temperature
 //Heat Conductivity
 static std::map<Element, float> TEMP_COEFF_MAP = {
 	{ AIR, 0.01f },
-	{ SAND, 1.0f },
+	{ SAND, 2.0f },
 	{ WATER, 5.0f },
 	{ WATER_VAPOR, 1.0f },
 	{ STONE, 1.0f },
 	{ ICE, 5.0f },
 	{ SPOUT, 1.0f },
 	{ FIRE, 5.0f },
-	{ EMBER, 1.0f },
-	{ SMOKE, 1.0f },
-	{ ASH, 1.0f },
+	{HOT_FIRE, 5.0f},
+	{ EMBER, 5.0f },
+	{ SMOKE, 0.1f },
+	{ ASH, 0.01f },
 	{ WOOD, 1.0f },
+	{ LAVA, 4.0f },
 	{ BORDER, -1.0f } };
 
 
@@ -101,6 +111,7 @@ static std::map<Element, float> SOLID_LIQUID_POINT = {
 	{ WATER, 273.0f },
 	{ ICE, 273.0f },
 	{ STONE, 900.0f },
+	{ LAVA, 800.0f },
 	{ BORDER, -1.0f } };
 
 static std::map<Element, float> GAS_LIQUID_POINT = {

@@ -25,6 +25,8 @@ ButtonGroup::ButtonGroup()
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
 	buttons.push_back(ButtonBase());
+	buttons.push_back(ButtonBase());
+	buttons.push_back(ButtonBase());
 
 	buttons[0].setColor(sf::Color::Yellow);
 	buttons[1].setColor(sf::Color::Blue);
@@ -34,7 +36,10 @@ ButtonGroup::ButtonGroup()
 	buttons[5].setColor(sf::Color::Red);
 	buttons[6].setColor(sf::Color(100,45,0));
 	buttons[7].setColor(COLOR_MAP[WATER_VAPOR]);
-	buttons[8].setColor(sf::Color::Magenta);
+	buttons[8].setColor(COLOR_MAP[HOT_FIRE]);
+	buttons[9].setColor(COLOR_MAP[LAVA]);
+	buttons[10].setColor(sf::Color::Magenta);
+	
 
 	int y = 20;
 	for (int i = 0; i < buttons.size(); i++) {

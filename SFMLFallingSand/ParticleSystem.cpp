@@ -142,6 +142,14 @@ void ParticleSystem::updateTileColor(int x, int y, Element type)
 			grid[x][y].color = sf::Color(255, 12 * life, 0.6*std::pow(life, 2));
 
 		}
+		else if (type == HOT_FIRE) {
+			//Update color to match life time
+			//Max life for fire is 20, min is 0
+			//Red 255,0,0 -> Yellow 255,255,0 ->White 255,255,255
+
+			grid[x][y].color = sf::Color(0.6*std::pow(life, 2), 12 * life,255);
+		
+		}
 		if (grid[x][y].isBurning) {
 			grid[x][y].color.g = grid[x][y].color.g / 4;
 
@@ -348,6 +356,78 @@ void ParticleSystem::update()
 					}
 				}
 				
+
+				//Reverse gravity--Does nothing right now
+				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
+					swap(x, y, x, y - 1);
+				}
+
+				if (grid[x][y - 1].type == FIRE || grid[x][y - 1].type != FIRE) {
+					//Check if diagonals are open
+					//Attempt to go diagonal up
+					if (grid[x + 1][y - 1].type == AIR || grid[x - 1][y - 1].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y - 1].type == AIR)
+								swap(x, y, x + 1, y - 1);
+						}
+						else {
+							if (grid[x - 1][y - 1].type == AIR)
+								swap(x, y, x - 1, y - 1);
+						}
+					}
+
+					//Attempt to go sideways
+					if (grid[x + 1][y].type == AIR || grid[x - 1][y].type == AIR) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y].type == AIR)
+								swap(x, y, x + 1, y);
+						}
+						else {
+							if (grid[x - 1][y].type == AIR)
+								swap(x, y, x - 1, y);
+						}
+					}
+				}
+			}
+
+			else if (curr.type == HOT_FIRE) {
+				//decriment life
+				grid[x][y].life--;
+				int life = grid[x][y].life;
+				//Update color to match life time
+				//Max life for fire is 20, min is 0
+				//Red 255,0,0 -> Yellow 255,255,0 ->White 255,255,255
+
+				//grid[x][y].color = sf::Color(255, 12*life, 0.6*std::pow(life,2));
+
+
+				if (grid[x][y].life == 0) {
+					replace(x, y, AIR);
+					continue;
+				}
+
+				int random = rand() % 100;
+
+				if (!USE_TEMPERATURE_MODEL) {
+					//Check if it can set anything on fire
+					if (grid[x - 1][y].type == WOOD && random < 5) {
+						ignite(x - 1, y);
+					}
+					else if (grid[x][y - 1].type == WOOD && random < 10) {
+						ignite(x, y - 1);
+					}
+					else if (grid[x + 1][y].type == WOOD && random < 10) {
+						ignite(x + 1, y);
+					}
+					else if (grid[x][y + 1].type == WOOD && random < 15) {
+						ignite(x, y + 1);
+					}
+				}
+
 
 				//Reverse gravity--Does nothing right now
 				if (DENSITY_MAP[grid[x][y - 1].type] < DENSITY_MAP[curr.type]) {
@@ -633,6 +713,62 @@ void ParticleSystem::update()
 
 				}
 			
+			}
+
+			else if (curr.type == LAVA) {
+
+				//Two versions of phase change, onle incorperationg temperature model
+				if (!USE_TEMPERATURE_MODEL) {
+					
+				}
+				else {
+					//Check if it should freeze
+					if (grid[x][y].temperature < SOLID_LIQUID_POINT[LAVA]) {
+						float oldTemp = grid[x][y].temperature;
+						replace(x, y, STONE);
+						grid[x][y].temperature = oldTemp*0.75;
+					}
+					
+				}
+
+
+
+				//Gravity
+				if (DENSITY_MAP[grid[x][y + 1].type] < DENSITY_MAP[curr.type]) {
+					swap(x, y, x, y + 1);
+				}
+				else if (DENSITY_MAP[grid[x][y + 1].type] >= DENSITY_MAP[curr.type]) {
+					//Attempt to go diagonal down
+					if (DENSITY_MAP[grid[x + 1][y + 1].type] < DENSITY_MAP[WATER] || DENSITY_MAP[grid[x - 1][y + 1].type] < DENSITY_MAP[WATER]) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y + 1].type == AIR)
+								swap(x, y, x + 1, y + 1);
+						}
+						else {
+							if (grid[x - 1][y + 1].type == AIR)
+								swap(x, y, x - 1, y + 1);
+						}
+					}
+
+					//Attempt to go sideways
+					if (DENSITY_MAP[grid[x + 1][y].type] < DENSITY_MAP[WATER] || DENSITY_MAP[grid[x - 1][y].type] < DENSITY_MAP[WATER]) {
+						int random = rand() % 2;
+
+						if (random == 0) {
+							if (grid[x + 1][y].type == AIR)
+								swap(x, y, x + 1, y);
+						}
+						else {
+							if (grid[x - 1][y].type == AIR)
+								swap(x, y, x - 1, y);
+						}
+					}
+
+
+				}
+
 			}
 
 			else if (curr.type == STONE) {
