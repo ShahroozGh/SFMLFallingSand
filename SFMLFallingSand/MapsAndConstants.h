@@ -2,7 +2,7 @@
 #include <map>
 #include <SFML\Graphics.hpp>
 
-enum Element { AIR, SAND, WATER, WATER_VAPOR, STONE, ICE, SPOUT, FIRE, HOT_FIRE, EMBER, SMOKE, ASH, WOOD, LAVA, BORDER };
+enum Element { AIR, SAND, WATER, WATER_VAPOR, STONE, ICE, SPOUT, FIRE, HOT_FIRE, EMBER, SMOKE, ASH, WOOD, LAVA, TORCH, BORDER };
 
 //Contains default colors of all the elements
 static std::map<Element, sf::Color> COLOR_MAP = {
@@ -20,6 +20,7 @@ static std::map<Element, sf::Color> COLOR_MAP = {
 	{ ASH, sf::Color(50, 50, 50) },
 	{ WOOD, sf::Color(100, 45, 0) },
 	{ LAVA, sf::Color::Red },
+	{ TORCH, sf::Color(255, 85, 0) },
 	{ BORDER, sf::Color::Magenta } };
 
 
@@ -38,6 +39,7 @@ static std::map<Element, float> DENSITY_MAP = {
 	{ ASH, 0.3f },
 	{ WOOD, 1.0f },
 	{ LAVA, 0.8f },
+	{ TORCH, 1.0f },
 	{ BORDER, 99.f} };
 
 static std::map<Element, bool> FLAMMABLE_MAP = {
@@ -55,6 +57,7 @@ static std::map<Element, bool> FLAMMABLE_MAP = {
 	{ ASH, false},
 	{ WOOD, true },
 	{ LAVA, false },
+	{ TORCH, false },
 	{ BORDER, false } };
 
 //Initial ambient temperatures (similar to kelvin)
@@ -83,6 +86,7 @@ static std::map<Element, float> AMBIENT_TEMP_MAP = {
 	{ ASH, 290.0f },
 	{ WOOD, 290.0f },
 	{ LAVA, 1000.0f },
+	{ TORCH, 290.0f },
 	{ BORDER, -1.0f } };
 
 //Determines resistance to change/transfer of temperature
@@ -102,6 +106,7 @@ static std::map<Element, float> TEMP_COEFF_MAP = {
 	{ ASH, 0.01f },
 	{ WOOD, 1.0f },
 	{ LAVA, 4.0f },
+	{ TORCH, 1.0f },
 	{ BORDER, -1.0f } };
 
 
@@ -110,7 +115,7 @@ static std::map<Element, float> SOLID_LIQUID_POINT = {
 	{ SAND, 900.0f },
 	{ WATER, 273.0f },
 	{ ICE, 273.0f },
-	{ STONE, 900.0f },
+	{ STONE, 800.0f },
 	{ LAVA, 800.0f },
 	{ BORDER, -1.0f } };
 

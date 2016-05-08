@@ -726,7 +726,7 @@ void ParticleSystem::update()
 					if (grid[x][y].temperature < SOLID_LIQUID_POINT[LAVA]) {
 						float oldTemp = grid[x][y].temperature;
 						replace(x, y, STONE);
-						grid[x][y].temperature = oldTemp*0.75;
+						grid[x][y].temperature = oldTemp;
 					}
 					
 				}
@@ -772,6 +772,17 @@ void ParticleSystem::update()
 			}
 
 			else if (curr.type == STONE) {
+				if (!USE_TEMPERATURE_MODEL) {
+				
+				}
+				else {
+					//Check if it should melt
+					if (grid[x][y].temperature > SOLID_LIQUID_POINT[STONE]) {
+						float oldTemp = grid[x][y].temperature;
+						replace(x, y, LAVA);
+						grid[x][y].temperature = oldTemp;
+					}
+				}
 			
 			}
 
@@ -868,6 +879,21 @@ void ParticleSystem::update()
 				else if (grid[x][y + 1].type == AIR && random < 15) {
 					//grid[x][y + 1] = ParticleBase(WATER, x, y + 1);
 					replace(x, y + 1, WATER);
+				}
+
+			}
+
+			else if (curr.type == TORCH) {
+				int random = rand() % 100;
+
+				if (grid[x - 1][y].type == AIR && random < 5) {
+					replace(x - 1, y, FIRE);
+				}
+				else if (grid[x + 1][y].type == AIR && random < 10) {
+					replace(x + 1, y, FIRE);
+				}
+				else if (grid[x][y - 1].type == AIR && random < 15) {
+					replace(x, y - 1, FIRE);
 				}
 
 			}

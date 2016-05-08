@@ -119,6 +119,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 					case 9:
 						particles.ADD_TYPE = LAVA;
 						break;
+					case 10:
+						particles.ADD_TYPE = TORCH;
+						break;
 					}
 				}
 			}
